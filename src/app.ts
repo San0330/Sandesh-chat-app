@@ -12,15 +12,24 @@ db.once("open", () => console.log("Connected successfully"))
 
 const app: Express = express()
 
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json()); 
+
 app.use(express.static(path.join(path.dirname(__dirname), 'public')))
 
 app.set('view engine', 'pug')
 app.set('views', path.join(path.dirname(__dirname), 'views'))
 
-app.use(express.urlencoded())
-
 app.get('/', (req: Request, res: Response) => {
     res.send("hello world")
+});
+
+app.get('/login', (req: Request, res: Response) => {
+    res.render("login")
+});
+
+app.get('/register', (req: Request, res: Response) => {
+    res.render("register")
 });
 
 app.all('*', (_, res: Response) => {

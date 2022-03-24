@@ -1,0 +1,14 @@
+extends layout/layout
+
+include components/form/form
+
+block content 
+    form(class="border border-green-500 w-1/2 mx-auto shadow-md px-8 py-5 rounded-md" method='POST' action="/login")
+        div(class='text-center text-2xl text-green-500') Login
+        +input("email","email")
+        +input("password","password")    
+        +submitButton()
+
+    div(class='text-center mt-5')
+        | No Account? 
+        a(class="text-green-500 hover:pointer ml-1" href="/register") Register
