@@ -1,23 +1,14 @@
 import { Router, Request, Response } from 'express'
+import authController from '../../controllers/authController'
 
 const router = Router();
 
-router.get('/login', (req: Request, res: Response) => {
-    res.render("login")
-});
+router.get('/login', authController.getLogin);
 
-router.post('/login', (req: Request, res: Response) => {
-    console.log(req.body)
-    res.render("login")
-});
+router.post('/login', authController.postLogin);
 
-router.get('/register', (req: Request, res: Response) => {
-    res.render("register")
-});
+router.get('/register', authController.getRegister);
 
-router.post('/register', (req: Request, res: Response) => {
-    console.log(req.body)
-    res.render("login")
-});
+router.post('/register', authController.postRegister);
 
 export default router;
