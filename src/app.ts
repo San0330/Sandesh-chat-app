@@ -1,6 +1,6 @@
 import config from './config/config'
 import path from 'path'
-import express, { Express, Request, Response } from 'express'
+import express, { Express, NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import authRoutes from './routes/web/auth_routes'
 import cookieparser from 'cookie-parser'
@@ -21,9 +21,8 @@ app.use(cookieparser());
 
 const mongoDBStore = mongdDBSession(session);
 const store = new mongoDBStore({
-    uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
-    databaseName: 'connect_mongodb_session_test',
-    collection: 'mySessions'
+    uri: config.db,
+    collection: 'sessions'
 })
 
 store.on('error', function (error) {
@@ -31,7 +30,7 @@ store.on('error', function (error) {
 });
 
 app.use(session({
-    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+    secret: config.session_secret,
     saveUninitialized: true,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week 
@@ -40,13 +39,29 @@ app.use(session({
     resave: false
 }));
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.session.user) {
+        res.locals.authenticated = true;
+        res.locals.username = req.session.user.username;
+    } else {
+        res.locals.authenticated = false;
+    }
+
+    next();
+})
+
 app.use(express.static(path.join(path.dirname(__dirname), 'public')))
 
 app.set('view engine', 'pug')
 app.set('views', path.join(path.dirname(__dirname), 'views'))
 
 app.get('/', (req: Request, res: Response) => {
-    res.render('home')
+    
+    if (!req.session.user) {
+        return res.redirect('/login')
+    }
+
+    return res.render('home')
 });
 
 app.use('/', authRoutes);

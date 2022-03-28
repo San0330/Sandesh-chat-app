@@ -1,28 +1,40 @@
 import { Request, Response } from 'express'
-import User from '../models/user'
+import User, { IUser } from '../models/user'
+
+declare module 'express-session' {
+    interface Session {
+        user: IUser
+    }
+}
 
 const getLogin = (req: Request, res: Response) => {
     res.render("login")
 }
 
 const postLogin = async (req: Request, res: Response) => {
+    try {
+        const { email, password } = req.body
 
-    const { email, password } = req.body
+        //check if user exists and password is valid
+        const user = await User.findOne({ email }).select('+password')
 
-    //check if user exists and password is valid
-    const user = await User.findOne({ email }).select('+password')
+        if (!user) {
+            return res.render('login')
+        }
 
-    if (user) {
-        res.render('/login')
+        const isPwdCorrect = await user.correctPassword(password, user.password)
+
+        if (!isPwdCorrect) {
+            return res.render('login')
+        }
+
+        user.password = undefined;
+        req.session.user = user;
+
+        res.redirect('/');
+    } catch (e) {
+        console.log(e)
     }
-
-    const isPwdCorrect = await user.correctPassword(password, user.password)
-
-    if (!isPwdCorrect) {
-        res.render('/login')
-    }
-
-    res.render('/')
 }
 
 const getRegister = (req: Request, res: Response) => {
@@ -38,13 +50,13 @@ const postRegister = async (req: Request, res: Response) => {
         confirm_password: req.body.confirm_password,
     });
 
-    console.log(user)
-
     res.render("register")
 }
 
 const logout = (req: Request, res: Response) => {
-    req.session.destroy();
+    req.session.destroy((err) => {
+        console.log(err)
+    });
     res.redirect('/');
 }
 
@@ -53,4 +65,5 @@ export default {
     postLogin,
     getRegister,
     postRegister,
+    logout,
 }

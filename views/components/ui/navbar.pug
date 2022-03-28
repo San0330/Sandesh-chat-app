@@ -2,6 +2,13 @@ mixin navbar()
     nav(class='bg-green-500 py-5')
         div(class='container mx-auto flex justify-between text-white')  
             a(href='/' class='text-bold text-xl') Sandesh 
-            div(class='flex gap-5 text-lg')
-                a(href='/login') Login
-                a(href='/register') Register 
+            unless authenticated
+                div(class='flex gap-5 text-lg')
+                    a(href='/login') Login
+                    a(href='/register') Register
+            else
+                div(class='flex gap-5 text-lg')
+                    div Welcome #{username}
+                    form(action='/logout' method="POST")
+                        button(type='submit') Logout
+
