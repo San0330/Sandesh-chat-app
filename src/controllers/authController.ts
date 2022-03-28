@@ -1,20 +1,28 @@
 import { Request, Response } from 'express'
-import User, { IUser } from '../models/user'
+import User from '../models/user'
 
 const getLogin = (req: Request, res: Response) => {
     res.render("login")
 }
 
-const postLogin = (req: Request, res: Response) => {
+const postLogin = async (req: Request, res: Response) => {
 
-    User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        confirm_password: req.body.confirm_password,
-    });
+    const { email, password } = req.body
 
-    res.render("login")
+    //check if user exists and password is valid
+    const user = await User.findOne({ email }).select('+password')
+
+    if (user) {
+        res.render('/login')
+    }
+
+    const isPwdCorrect = await user.correctPassword(password, user.password)
+
+    if (!isPwdCorrect) {
+        res.render('/login')
+    }
+
+    res.render('/')
 }
 
 const getRegister = (req: Request, res: Response) => {
@@ -33,6 +41,11 @@ const postRegister = async (req: Request, res: Response) => {
     console.log(user)
 
     res.render("register")
+}
+
+const logout = (req: Request, res: Response) => {
+    req.session.destroy();
+    res.redirect('/');
 }
 
 export default {

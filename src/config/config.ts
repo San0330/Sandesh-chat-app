@@ -7,6 +7,7 @@ const config = {
     app_url: process.env.APP_URL,
     app_port: process.env.APP_PORT,
     db: process.env.DB_URI,
+    session_secret:process.env.SESSION_SECRET
 }
 
 export default config

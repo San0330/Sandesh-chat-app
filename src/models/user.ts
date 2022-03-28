@@ -8,7 +8,8 @@ export interface IUser extends Document {
     password: string;
     confirm_password: string,
     created_at: Schema.Types.Date,
-    avatar?: string;
+    avatar?: string,
+    correctPassword: (a: string, b: string) => Promise<boolean>,
 }
 
 const userSchema = new Schema<IUser>({
