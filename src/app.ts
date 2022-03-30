@@ -6,6 +6,8 @@ import authRoutes from './routes/web/auth_routes'
 import cookieparser from 'cookie-parser'
 import session from 'express-session'
 import mongdDBSession from 'connect-mongodb-session'
+import { Server } from 'socket.io'
+import http from 'http'
 
 mongoose.connect(config.db)
 const db = mongoose.connection
@@ -18,6 +20,9 @@ const app: Express = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 app.use(cookieparser());
+
+const server = http.createServer(app)
+const io = new Server(server)
 
 const mongoDBStore = mongdDBSession(session);
 const store = new mongoDBStore({
@@ -56,7 +61,7 @@ app.set('view engine', 'pug')
 app.set('views', path.join(path.dirname(__dirname), 'views'))
 
 app.get('/', (req: Request, res: Response) => {
-    
+
     if (!req.session.user) {
         return res.redirect('/login')
     }
@@ -70,5 +75,17 @@ app.all('*', (_, res: Response) => {
     res.render('404')
 })
 
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+
+    socket.on('message', (msg) => {
+        console.log('message: ' + msg);
+    });
+})
+
 const APP_PORT = config.app_port || 4000
-app.listen(APP_PORT, () => console.log(`Server started at port ${APP_PORT}`))
+server.listen(APP_PORT, () => console.log(`Server started at port ${APP_PORT}`))

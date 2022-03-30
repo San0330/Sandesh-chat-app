@@ -7,10 +7,11 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible" content="IE=edge")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")                 
         script(src="https://cdn.tailwindcss.com")
+        script(src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous")
         title Sandesh
     body 
         +navbar()
         div(class='container mx-auto mt-10')
             block content 
 
-            block customScripts         
+        block customScripts
