@@ -3,6 +3,7 @@ import path from 'path'
 import express, { Express, NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import authRoutes from './routes/web/auth_routes'
+import homeRoutes from './routes/web/home_routes'
 import cookieparser from 'cookie-parser'
 import session from 'express-session'
 import mongdDBSession from 'connect-mongodb-session'
@@ -71,13 +72,15 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/', authRoutes);
 
+app.use('/home', homeRoutes);
+
 app.all('*', (_, res: Response) => {
     res.render('404')
 })
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
