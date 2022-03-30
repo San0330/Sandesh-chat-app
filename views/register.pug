@@ -3,7 +3,7 @@ extends layout/layout
 include components/form/form
 
 block content 
-    form(class="border border-green-500 w-1/2 mx-auto shadow-md px-8 py-5 rounded-md" method='POST' action="/register")
+    form(class="border border-green-500 w-1/2 mx-auto shadow-md px-8 py-5 rounded-md mt-10" method='POST' action="/register")
         div(class='text-center text-2xl text-green-500') Register
         +input("username","text")
         +input("email","email")

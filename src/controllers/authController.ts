@@ -8,6 +8,11 @@ declare module 'express-session' {
 }
 
 const getLogin = (req: Request, res: Response) => {
+
+    if (req.session.user) {
+        return res.redirect('/')
+    }
+
     res.render("login")
 }
 
@@ -38,6 +43,11 @@ const postLogin = async (req: Request, res: Response) => {
 }
 
 const getRegister = (req: Request, res: Response) => {
+
+    if (req.session.user) {
+        return res.redirect('/')
+    }
+    
     res.render("register")
 }
 
