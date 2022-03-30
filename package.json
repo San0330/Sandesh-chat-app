@@ -27,6 +27,7 @@
   "homepage": "https://github.com/San0330/chat_app#readme",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/connect-flash": "^0.0.37",
     "@types/connect-mongodb-session": "^2.4.2",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
@@ -39,6 +40,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^3.1.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",

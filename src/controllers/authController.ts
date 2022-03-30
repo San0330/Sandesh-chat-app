@@ -36,6 +36,8 @@ const postLogin = async (req: Request, res: Response) => {
         user.password = undefined;
         req.session.user = user;
 
+        req.flash('info', 'Login successful')
+
         res.redirect('/');
     } catch (e) {
         console.log(e)
@@ -47,7 +49,7 @@ const getRegister = (req: Request, res: Response) => {
     if (req.session.user) {
         return res.redirect('/')
     }
-    
+
     res.render("register")
 }
 
@@ -67,6 +69,7 @@ const logout = (req: Request, res: Response) => {
     req.session.destroy((err) => {
         console.log(err)
     });
+
     res.redirect('/');
 }
 

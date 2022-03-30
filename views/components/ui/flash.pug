@@ -1,0 +1,7 @@
+mixin flash()
+    if messages && messages.length
+        div(class="fixed z-10 top-20 text-xl bg-blue-500/70 right-3 text-white py-2 px-4 rounded-xl flash-message")
+            p= messages    
+
+    script.
+        setTimeout(() => $('.flash-message').addClass('hidden'), 3000)        

@@ -9,6 +9,7 @@ import session from 'express-session'
 import mongdDBSession from 'connect-mongodb-session'
 import { Server } from 'socket.io'
 import http from 'http'
+import flash from 'connect-flash'
 
 mongoose.connect(config.db)
 const db = mongoose.connection
@@ -45,6 +46,8 @@ app.use(session({
     resave: false
 }));
 
+app.use(flash())
+
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.session.user) {
         res.locals.authenticated = true;
@@ -67,7 +70,7 @@ app.get('/', (req: Request, res: Response) => {
         return res.redirect('/login')
     }
 
-    return res.render('home')
+    return res.render('home', { messages: req.flash('info') })
 });
 
 app.use('/', authRoutes);
