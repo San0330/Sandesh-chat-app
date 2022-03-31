@@ -55,33 +55,42 @@ block customScripts
             $('#message-nav').text(activeUsername)
         })
 
-        $('#search-field').blur(function(e){
-            $(this).empty()
-        })
+        //- $('#search-field').blur(function(e){
+        //-     $('#searchlists').empty()
+        //- })
 
-        $('#search-field').blur(function(e){
-            $('#searchlists').empty()
-        })
-
-
-        $('#search-field').keyup(function(e){
+        $('#search-field').keyup(function(e){            
             if($(this).val().trim().length == 0){
                 $('#searchlists').empty()
+                return;
             }
 
             fetch(`/home/user?search=${$(this).val()}`)
             .then(res=> res.json())
             .then(res => {                
                 $('#searchlists').empty()
-                res.data.forEach(user => {                    
+                res.data.users.forEach(user => {                    
                     $('#searchlists').append(
                         `
                         <div class='flex justify-between'>
                             <p>${user.username}</p>
-                            <button>Connect</button>
+                            ${res.data.connectionLists.includes(user._id) ? "Connected" : `<button class="connect__btn" data-id="${user._id}">Connect</button>`}
                         </div>
                         `
                     )
                 })
             })
         })
+
+        $('#searchlists').on('click','.connect__btn', function(e){
+            e.preventDefault()
+
+            fetch(`/home/connection?userId=${$(this).data('id')}`)
+                .then(res=> res.json())
+                .then(res => {                
+                    $('#searchlists').empty()                    
+                    $('#search-field').val('')
+                }).catch(err => {
+                    alert("ERROR");
+                })
+        })        
