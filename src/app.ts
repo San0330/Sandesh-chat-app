@@ -51,7 +51,7 @@ app.use(flash())
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.session.user) {
         res.locals.authenticated = true;
-        res.locals.username = req.session.user.username;
+        res.locals.user = req.session.user;
     } else {
         res.locals.authenticated = false;
     }
@@ -63,15 +63,6 @@ app.use(express.static(path.join(path.dirname(__dirname), 'public')))
 
 app.set('view engine', 'pug')
 app.set('views', path.join(path.dirname(__dirname), 'views'))
-
-app.get('/', (req: Request, res: Response) => {
-
-    if (!req.session.user) {
-        return res.redirect('/login')
-    }
-
-    return res.render('home', { messages: req.flash('info') })
-});
 
 app.use('/', authRoutes);
 
@@ -88,10 +79,16 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    socket.on('message', (msg) => {
-        console.log('message: ' + msg);
+    socket.on('message', ({ message, connectionId, senderId }) => {
+        console.log({ message, connectionId, senderId })        
+        io.in(connectionId).emit('message', { message, connectionId, senderId })        
     });
+
+    socket.on('join', (arg, callback) => {
+        socket.join(arg.connId);
+        callback(`joined ${arg.connId} by ${arg.username}`)
+    })
 })
 
 const APP_PORT = config.app_port || 4000
-server.listen(APP_PORT, () => console.log(`Server started at port ${APP_PORT}`))
+server.listen(APP_PORT, () => console.log(`Server started at port ${ APP_PORT }`))

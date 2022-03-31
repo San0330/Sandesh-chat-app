@@ -14,12 +14,10 @@ const getUser = async (req: Request, res: Response) => {
 
     let connectionLists = []
     for (const user of users) {
-
         let foundConnection = await Connection.find({ users: { $all: [user._id, req.session.user._id] } });
-        if (foundConnection && user._id.toString() != req.session.user._id.toString()) {
+        if (foundConnection.length && user._id.toString() != req.session.user._id.toString()) {
             connectionLists.push(user._id.toString())
         }
-
     }
 
     return res.status(200).json({
