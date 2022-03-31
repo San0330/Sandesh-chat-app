@@ -51,7 +51,7 @@ app.use(flash())
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.session.user) {
         res.locals.authenticated = true;
-        res.locals.user = req.session.user;
+        res.locals.authUser = req.session.user;
     } else {
         res.locals.authenticated = false;
     }
