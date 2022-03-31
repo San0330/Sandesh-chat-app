@@ -26,7 +26,7 @@ block fullWidthContent
             nav(class='w-full bg-blue-200 text-black font-bold p-3 text-xl ' id='message-nav')
                 p none
             div(class='px-5 h-full overflow-scroll message-wrapper')
-                div(class='messages flex flex-col items-baseline mb-8')
+                div(class='messages flex flex-col items-baseline mb-32')
                     //- p(class="text-white text-lg bg-green-500 rounded-lg p-2 m-1 self-end") message1 
                     //- p(class="text-white text-lg bg-gray-400 rounded-lg p-2 m-1 self-start") message1
 
@@ -83,21 +83,37 @@ block customScripts
                     $(ele).attr('data-active',"false")
                 }
             })
+
+            fetchActiveUserChats(connId)
         }
 
-        socket.on('message',function({message,connectionId, senderId}){                                                
+        function fetchActiveUserChats(clickedDataId){
+            fetch(`/home/chats?connectionId=${clickedDataId}`)
+            .then(res=> res.json())
+            .then(res => {                         
+                $('.messages').empty()                    
+                res.data.chats.forEach(chat => {                       
+                    appendChats(chat)
+                })
+            })
+        }
+
+        function appendChats({message,connectionId, senderId}){
             if(senderId == "#{authUser._id}"){
                 $('.messages').append(`<p class="text-white text-lg bg-green-500 rounded-lg p-2 m-1 self-end">${message}</p>`)
             }else{
                 $('.messages').append(`<p class="text-white text-lg bg-gray-400 rounded-lg p-2 m-1 self-start">${message}</p>`)
             }
-
             $('#message').val('')
-
-            // activate the user from whom the message is received
-            updateActiveUser(connectionId)            
-
             $('.message-wrapper').scrollTop($('.message-wrapper')[0].scrollHeight)
+        }
+
+        socket.on('message',function({message,connectionId, senderId}){                                                
+            if(senderId !== "#{authUser._id}"){
+                // activate the user from whom the message is received
+                updateActiveUser(connectionId)            
+            }
+            appendChats({message,connectionId, senderId})
         })                        
 
         // get all the users that matches search query

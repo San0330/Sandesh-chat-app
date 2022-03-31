@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import Connection from '../models/connections';
 import User from '../models/user'
+import Chat from '../models/chats'
 
 const getUser = async (req: Request, res: Response) => {
 
@@ -29,6 +30,18 @@ const getUser = async (req: Request, res: Response) => {
     })
 }
 
+const getChats = async (req: Request, res: Response) => {
+
+    let chats = await Chat.find({ "connectionId": req.query.connectionId as string });
+
+    return res.status(200).json({
+        success: true,
+        data: {
+            chats
+        }
+    })
+}
+
 const createConnection = async (req: Request, res: Response) => {
     let userId = req.query.userId;
 
@@ -46,5 +59,6 @@ const createConnection = async (req: Request, res: Response) => {
 
 export default {
     getUser,
-    createConnection
+    createConnection,
+    getChats
 }

@@ -7,4 +7,6 @@ router.get('/user', homeController.getUser);
 
 router.get('/connection', homeController.createConnection)
 
+router.get('/chats', homeController.getChats)
+
 export default router

@@ -10,6 +10,7 @@ import mongdDBSession from 'connect-mongodb-session'
 import { Server } from 'socket.io'
 import http from 'http'
 import flash from 'connect-flash'
+import Chat from '../src/models/chats'
 
 mongoose.connect(config.db)
 const db = mongoose.connection
@@ -79,8 +80,8 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    socket.on('message', ({ message, connectionId, senderId }) => {
-        console.log({ message, connectionId, senderId })        
+    socket.on('message', async ({ message, connectionId, senderId }) => {        
+        let chat = await Chat.create({ message, connectionId, senderId });        
         io.in(connectionId).emit('message', { message, connectionId, senderId })        
     });
 
