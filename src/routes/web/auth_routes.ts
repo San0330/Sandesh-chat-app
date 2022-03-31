@@ -10,7 +10,6 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     let connections = await Connection.find({ users: req.session.user._id }).populate('users');
-    console.log(connections)
 
     return res.render('home', { messages: req.flash('info'), connections: connections })
 });

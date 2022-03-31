@@ -17,10 +17,10 @@ block fullWidthContent
                     - let connectionId = connection._id
                     if connection.users[0]._id.toString() != authUser._id.toString()
                         - let username = connection.users[0].username
-                        +connection(username,connectionId,true)
+                        +connection(username,connectionId)
                     else
                         - let username = connection.users[1].username                        
-                        +connection(username,connectionId,true)
+                        +connection(username,connectionId)
 
         section#messagelists(class="relative bg-blue-100 w-full")
             nav(class='w-full bg-blue-200 text-black font-bold p-3 text-xl ' id='message-nav')
@@ -53,21 +53,23 @@ block customScripts
         })
 
         // activate the first connection in connection list
-        updateActiveUser($('ul.userlists li').first().data('id'))
+        if($('ul.userlists li').length){            
+            updateActiveUser($('ul.userlists li').first().data('id'))
+
+            // join rooms of all the connections
+            $('.userlists li').each(function(idx,ele){
+                let connId = $(ele).data('id')
+                socket.emit('join', {connId, username: "#{authUser.username}"}, (x) => {
+                    console.log(x)
+                })
+            })
+        }
 
         // activate the clicked connection
         $('.userlists li').click(function(e){                            
             let clickedDataId = $(this).data('id')
             updateActiveUser(clickedDataId)            
-        })
-
-        // join rooms of all the connections
-        $('.userlists li').each(function(idx,ele){
-            let connId = $(ele).data('id')
-            socket.emit('join', {connId, username: "#{authUser.username}"}, (x) => {
-                console.log(x)
-            })
-        })
+        })        
 
         // activate connection with given connectionId
         function updateActiveUser(connId){           
@@ -108,7 +110,7 @@ block customScripts
             $('.message-wrapper').scrollTop($('.message-wrapper')[0].scrollHeight)
         }
 
-        socket.on('message',function({message,connectionId, senderId}){                                                
+        socket.on('message',function({message,connectionId, senderId}){
             if(senderId !== "#{authUser._id}"){
                 // activate the user from whom the message is received
                 updateActiveUser(connectionId)            
@@ -149,6 +151,7 @@ block customScripts
                 .then(res => {                
                     $('#searchlists').empty()                    
                     $('#search-field').val('')
+                    location.reload()
                 }).catch(err => {
                     alert("ERROR");
                 })

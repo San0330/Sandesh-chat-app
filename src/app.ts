@@ -10,7 +10,7 @@ import mongdDBSession from 'connect-mongodb-session'
 import { Server } from 'socket.io'
 import http from 'http'
 import flash from 'connect-flash'
-import Chat from '../src/models/chats'
+import Chat from './models/chats'
 
 mongoose.connect(config.db)
 const db = mongoose.connection
@@ -80,9 +80,9 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    socket.on('message', async ({ message, connectionId, senderId }) => {        
-        let chat = await Chat.create({ message, connectionId, senderId });        
-        io.in(connectionId).emit('message', { message, connectionId, senderId })        
+    socket.on('message', async ({ message, connectionId, senderId }) => {
+        await Chat.create({ message, connectionId, senderId });
+        io.in(connectionId).emit('message', { message, connectionId, senderId })
     });
 
     socket.on('join', (arg, callback) => {
@@ -92,4 +92,4 @@ io.on('connection', (socket) => {
 })
 
 const APP_PORT = config.app_port || 4000
-server.listen(APP_PORT, () => console.log(`Server started at port ${ APP_PORT }`))
+server.listen(APP_PORT, () => console.log(`Server started at port ${APP_PORT}`))

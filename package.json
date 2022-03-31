@@ -1,12 +1,12 @@
 {
-  "name": "chat_app",
+  "name": "sandesh_chat_app",
   "version": "1.0.0",
   "description": "a basic real time chat app made with nodeJs & typescript",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.ts",
     "build": "tsc",
-    "start": "npm run build & node dist/app.js",
+    "start": "npm run build && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
