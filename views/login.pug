@@ -5,6 +5,7 @@ include components/form/form
 block content 
     form(class="border border-green-500 w-1/2 mx-auto shadow-md px-8 py-5 rounded-md mt-10" method='POST' action="/login")
         div(class='text-center text-2xl text-green-500') Login
+        +errors()
         +input("email","email")
         +input("password","password")    
         +submitButton()
@@ -12,4 +13,3 @@ block content
     div(class='text-center mt-5')
         | No Account? 
         a(class="text-green-500 hover:pointer ml-1 hover:underline" href="/register") Register
-        

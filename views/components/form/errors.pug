@@ -1,0 +1,4 @@
+mixin errors()
+    if errors
+        each error in errors 
+            div(class="bg-red-100 text-red-500 block w-full px-2 py-3 mb-2") #{error.msg}

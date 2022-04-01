@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import User, { IUser } from '../models/user'
+import { validationResult } from 'express-validator'
 
 declare module 'express-session' {
     interface Session {
@@ -18,6 +19,14 @@ const getLogin = (req: Request, res: Response) => {
 
 const postLogin = async (req: Request, res: Response) => {
     try {
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            return res.render('login', {
+                errors: errors.array()
+            })
+        }
+
         const { email, password } = req.body
 
         //check if user exists and password is valid
@@ -30,7 +39,7 @@ const postLogin = async (req: Request, res: Response) => {
         const isPwdCorrect = await user.correctPassword(password, user.password)
 
         if (!isPwdCorrect) {
-            return res.render('login')
+            throw 'invalid password';
         }
 
         user.password = undefined;
@@ -41,6 +50,7 @@ const postLogin = async (req: Request, res: Response) => {
         res.redirect('/');
     } catch (e) {
         console.log(e)
+        return res.redirect('back')
     }
 }
 
@@ -54,15 +64,27 @@ const getRegister = (req: Request, res: Response) => {
 }
 
 const postRegister = async (req: Request, res: Response) => {
+    try {
+        const errors = validationResult(req)
 
-    let user = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        confirm_password: req.body.confirm_password,
-    });
+        if (!errors.isEmpty()) {
+            return res.render('register', {
+                errors: errors.array()
+            })
+        }
 
-    res.render("register")
+        await User.create({
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            confirm_password: req.body.confirm_password,
+        });
+
+        res.render("register")
+    } catch (e) {
+        console.log(e)
+        res.redirect('back')
+    }
 }
 
 const logout = (req: Request, res: Response) => {
