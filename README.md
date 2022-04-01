@@ -1,6 +1,6 @@
 # Sandesh (chat app)
 
-<img src="screenshots/picture1.png" width="250" height="180" alt="logo">
+<img src="screenshots/picture1.png" width="540" height="340" alt="chat screen">
 
 ## About
 A basic realtime chat application done to practise Typescript as well as socketIO.
